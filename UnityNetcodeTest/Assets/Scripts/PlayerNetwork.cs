@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class PlayerNetwork : NetworkBehaviour
 {
+    [SerializeField] private Transform spawnedObjectPrefab;
+    private Transform spawnedObjectTransform;
   private NetworkVariable<MyCustomData> randomNumber = new NetworkVariable<MyCustomData>(
     new MyCustomData
     {
@@ -44,13 +46,21 @@ public class PlayerNetwork : NetworkBehaviour
 
     if (Input.GetKeyDown(KeyCode.T))
     {
-        TestClientRPC(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new List<ulong> {1} }});
+        spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
+        spawnedObjectPrefab.GetComponent<NetworkObject>().Spawn(true);
+        //TestClientRPC(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new List<ulong> {1} }});
     //   randomNumber.Value = new MyCustomData
     //   {
     //     _int = 10,
     //     _bool = false,
     //     message = "Test message",
     //   };
+    }
+
+    if(Input.GetKeyDown(KeyCode.Y))
+    {
+        spawnedObjectPrefab.GetComponent<NetworkObject>().Despawn(true);
+        Destroy(spawnedObjectTransform.gameObject);
     }
 
     Vector3 moveDir = new Vector3(0, 0, 0);
